@@ -22,6 +22,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public Self-Registration
+    |--------------------------------------------------------------------------
+    |
+    | The MVP keeps public self-registration disabled by default. Enable this
+    | explicitly only when the product flow is ready to admit new users
+    | without manual administrator provisioning.
+    |
+    */
+
+    'allow_public_registration' => env('AUTH_ALLOW_SELF_REGISTRATION', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Authentication Guards
     |--------------------------------------------------------------------------
     |

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Support\DashboardRouteResolver;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -47,6 +48,19 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        $user = Auth::user();
+
+        if ($user === null || ! app(DashboardRouteResolver::class)->hasAllowedDashboard($user)) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account does not have an assigned role or dashboard yet. Please contact an administrator.',
             ]);
         }
 

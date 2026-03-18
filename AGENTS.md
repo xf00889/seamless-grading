@@ -4,7 +4,7 @@
 School Grading Workflow System
 
 ## Stack
-- Laravel 11
+- Laravel 13
 - PHP 8.3+
 - Blade
 - Livewire 4
@@ -12,7 +12,7 @@ School Grading Workflow System
 - MySQL 8+
 - Spatie Laravel Permission
 - Laravel Excel
-- Pest for testing
+- PHPUnit 12 for testing
 - Vite for frontend asset bundling
 
 ## Product scope
@@ -61,6 +61,89 @@ Not included in MVP:
 - Every major workflow change must have feature tests.
 - Do not start unrelated features.
 - Do not implement phase 2 items unless explicitly requested.
+
+## Security and secure coding rules
+- Follow secure-by-default coding practices.
+- Never trust user input, uploaded files, route parameters, query strings, headers, or client-side state.
+- Validate all incoming data with Form Requests or dedicated validators before processing.
+- Authorize every protected action with Policies, Gates, middleware, or permissions.
+- Do not rely on hidden UI elements as a security control.
+- Use CSRF protection for all state-changing requests.
+- Escape output by default and do not render raw HTML unless it is explicitly sanitized and required.
+- Prevent mass-assignment vulnerabilities by using guarded or fillable properties correctly.
+- Never expose secrets, tokens, API keys, passwords, or internal system details in code, logs, views, or error messages.
+- Do not commit `.env` values, private keys, credentials, or generated secrets.
+- Use Laravel hashing for passwords and never store plain-text passwords.
+- Use signed URLs, temporary URLs, or access-controlled download flows where sensitive files are involved.
+- Treat file uploads as untrusted input and validate MIME type, extension, size, and processing rules.
+- Store uploads in controlled locations and never execute uploaded content.
+- Sanitize file names and avoid trusting original client-provided names.
+- Do not use `eval`, shell execution, raw unserialize on untrusted data, or unsafe dynamic class resolution.
+- Avoid raw SQL unless absolutely necessary. If raw SQL is required, use parameter binding only.
+- Do not concatenate user input into SQL, shell commands, HTML, JavaScript, URLs, or file paths.
+- Prevent IDOR vulnerabilities by always scoping records to the authenticated user's allowed access.
+- Enforce rate limiting, throttling, or protective controls where authentication, imports, and heavy actions are exposed.
+- Use secure defaults for cookies, sessions, auth flows, and password resets.
+- Log important security-relevant actions without logging sensitive payload values.
+- Fail safely. On authorization or validation failure, return proper Laravel responses without leaking internal details.
+
+## Laravel coding standards
+- Follow current Laravel conventions and idiomatic framework patterns.
+- Prefer framework-native solutions before custom abstractions.
+- Use Form Requests for validation.
+- Use Policies for authorization.
+- Use route model binding where appropriate.
+- Keep controllers thin and focused on request/response handling.
+- Keep business logic out of controllers, Blade views, and Livewire components.
+- Use Actions for write operations, state transitions, and business processes.
+- Use Services for orchestration, reusable domain logic, or integrations.
+- Use Eloquent relationships clearly and consistently.
+- Prefer named routes and route groups.
+- Use resourceful controllers and REST-style route naming where it fits.
+- Use dependency injection instead of manual container lookups whenever possible.
+- Use Laravel collections, helpers, casts, scopes, and built-in features where they improve clarity.
+- Use database transactions for multi-step writes that must succeed or fail together.
+- Use queued jobs only when explicitly needed and when failure/retry behavior is clear.
+- Use events/listeners only where they genuinely improve separation, not as unnecessary indirection.
+- Keep config in config files, not scattered magic values in application code.
+- Avoid duplicated logic across controllers, components, requests, actions, and services.
+- Prefer explicit, readable code over clever abstractions.
+
+## Query security and performance rules
+- Write secure and optimized queries by default.
+- Always scope data access to the authenticated user's allowed records.
+- Prefer Eloquent or Query Builder over raw SQL.
+- If raw SQL is required, use bound parameters and document why it is necessary.
+- Select only the columns needed; avoid `select *` unless there is a clear reason.
+- Eager load required relationships to prevent N+1 query problems.
+- Do not eager load unnecessary relationships.
+- Use pagination for large tables and admin indexes.
+- Use chunking, lazy collections, cursors, or batch processing for large imports and exports where appropriate.
+- Use database indexes for frequently filtered, joined, sorted, or uniqueness-constrained columns.
+- Avoid querying inside loops.
+- Avoid loading entire datasets into memory when only summaries, counts, or paginated results are needed.
+- Prefer database-side filtering, aggregation, and existence checks over in-memory filtering on large datasets.
+- Use `exists()` instead of `count()` when only existence matters.
+- Use transactions for workflows that write to multiple related tables.
+- Consider locking or conflict protection where concurrent updates can corrupt workflow state.
+- Review query plans for complex reports, import validation, and export generation paths.
+- Keep read queries simple, predictable, and properly scoped.
+
+## Secure coding style and review checklist
+- Every new feature must be reviewed for validation, authorization, data exposure, and unsafe query behavior.
+- Before finishing any task, verify:
+  - all inputs are validated
+  - all protected actions are authorized
+  - no sensitive data is exposed in responses, logs, or exceptions
+  - no raw unparameterized SQL was introduced
+  - no query-in-loop or obvious N+1 issue was introduced
+  - no inline secrets or credentials were introduced
+  - file handling is validated and access controlled
+  - output rendering is escaped or sanitized appropriately
+- Prefer explicit names, explicit types, explicit state transitions, and predictable control flow.
+- Do not silence errors unless there is a documented reason.
+- Do not add dead code, speculative abstractions, or security theater.
+- If a tradeoff is made between speed and safety, choose safety unless explicitly instructed otherwise.
 
 ## Architecture rules
 - Use an Action class for every write operation, workflow transition, or business process.
@@ -152,7 +235,7 @@ Not included in MVP:
 - Use enums or value objects for statuses instead of scattered raw strings where practical.
 
 ## Testing rules
-- Use Pest feature tests for role access and workflow behavior.
+- Use PHPUnit 12 feature tests for role access and workflow behavior.
 - Add tests for authorization, validation, and state transitions.
 - Add tests for critical business rules and workflow blockers.
 - Run relevant tests after each task.
@@ -161,11 +244,13 @@ Not included in MVP:
 - Do not mark work complete if key tests are missing.
 
 ## Delivery rules for Codex
+- For every task, apply Laravel standards, secure coding rules, and query optimization rules from this file.
+
 For each task:
 1. Read this file first.
 2. Keep scope limited to the requested task.
 3. Make the smallest coherent set of changes needed.
-4. Respect the existing Laravel 11 and Livewire 4 setup already installed in the repo.
+4. Respect the existing Laravel 13 and Livewire 4 setup already installed in the repo.
 5. Prefer Blade for simple CRUD pages and reserve Livewire 4 for interactive workflow screens.
 6. Run relevant tests and artisan commands after implementation.
 7. Summarize:
@@ -180,6 +265,8 @@ For each task:
 
 ## Self-check rules
 Before finishing any task, verify:
+- validation, authorization, query safety, and sensitive data exposure were reviewed
+- no obvious N+1 or query-in-loop issue was introduced
 - no business logic was added to controllers
 - no business logic was added to Blade views
 - no business logic was added to Livewire components
