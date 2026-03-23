@@ -6,6 +6,7 @@ use Database\Factories\GradingSheetExportFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GradingSheetExport extends Model
 {
@@ -39,5 +40,10 @@ class GradingSheetExport extends Model
     public function exportedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'exported_by');
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(GradingSheetExportAuditLog::class);
     }
 }

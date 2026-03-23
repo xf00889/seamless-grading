@@ -53,7 +53,29 @@ class LoginRequest extends FormRequest
 
         $user = Auth::user();
 
-        if ($user === null || ! app(DashboardRouteResolver::class)->hasAllowedDashboard($user)) {
+        if ($user === null) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        if (! $user->is_active) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => 'Your account is inactive. Please contact an administrator.',
+            ]);
+        }
+
+        if (! app(DashboardRouteResolver::class)->hasAllowedDashboard($user)) {
             Auth::logout();
             $this->session()->invalidate();
             $this->session()->regenerateToken();

@@ -47,6 +47,11 @@ class SystemSettingSeeder extends Seeder
                 'description' => 'Open grading period reference.',
                 'is_public' => false,
             ],
+            'grading.rules' => [
+                'value' => config('grading.rules'),
+                'description' => 'Grade entry validation and submission rules.',
+                'is_public' => false,
+            ],
             'templates.active.sf9' => [
                 'value' => ['template_id' => $sf9Template?->id, 'version' => $sf9Template?->version],
                 'description' => 'Active SF9 template reference.',

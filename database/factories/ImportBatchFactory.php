@@ -26,6 +26,7 @@ class ImportBatchFactory extends Factory
             'valid_rows' => 0,
             'invalid_rows' => 0,
             'confirmed_at' => null,
+            'confirmed_by' => null,
         ];
     }
 }

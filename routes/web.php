@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Adviser\DashboardController as AdviserDashboardController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Registrar\DashboardController as RegistrarDashboardController;
+use App\Http\Controllers\Teacher\DashboardController as TeacherDashboardController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -31,87 +35,39 @@ Route::middleware('auth')->group(function () {
             ->name('dashboard');
 
         Route::prefix('admin')->name('admin.')->group(function () {
-            Route::view('/dashboard', 'dashboard', [
-                'eyebrow' => 'Admin workspace',
-                'title' => 'Admin Dashboard',
-                'description' => 'Monitor the grading workflow foundation and access setup tools reserved for administrators.',
-                'links' => [
-                    [
-                        'label' => 'Academic Setup',
-                        'route' => 'admin.academic-setup',
-                        'description' => 'Prepare school year, sections, grading periods, and templates in the next MVP slices.',
-                    ],
-                ],
-            ])->middleware('can:viewAdminDashboard,'.User::class)->name('dashboard');
+            Route::get('/dashboard', AdminDashboardController::class)
+                ->middleware('can:viewAdminDashboard,'.User::class)
+                ->name('dashboard');
 
-            Route::view('/academic-setup', 'protected-page', [
-                'eyebrow' => 'Admin tools',
-                'title' => 'Academic Setup',
-                'description' => 'This protected area is reserved for administrators who manage school-wide setup and workflow controls.',
-            ])->middleware('can:viewAcademicSetup,'.User::class)->name('academic-setup');
+            require __DIR__.'/admin-academic-setup.php';
+            require __DIR__.'/admin-user-management.php';
+            require __DIR__.'/admin-sf1-imports.php';
+            require __DIR__.'/admin-template-management.php';
+            require __DIR__.'/admin-submission-monitoring.php';
         });
 
         Route::prefix('teacher')->name('teacher.')->group(function () {
-            Route::view('/dashboard', 'dashboard', [
-                'eyebrow' => 'Teacher workspace',
-                'title' => 'Teacher Dashboard',
-                'description' => 'Review your grading workspace and open the teacher-only routes tied to your assigned loads.',
-                'links' => [
-                    [
-                        'label' => 'My Teaching Loads',
-                        'route' => 'teacher.loads.index',
-                        'description' => 'Open the protected route for teacher-owned class and subject assignments.',
-                    ],
-                ],
-            ])->middleware('can:viewTeacherDashboard,'.User::class)->name('dashboard');
+            Route::get('/dashboard', TeacherDashboardController::class)
+                ->middleware('can:viewTeacherDashboard,'.User::class)
+                ->name('dashboard');
 
-            Route::view('/loads', 'protected-page', [
-                'eyebrow' => 'Teacher tools',
-                'title' => 'My Teaching Loads',
-                'description' => 'This protected area is limited to teachers and represents the starting point for load-specific grading workflows.',
-            ])->middleware('can:viewTeacherLoads,'.User::class)->name('loads.index');
+            require __DIR__.'/teacher-work-area.php';
         });
 
         Route::prefix('adviser')->name('adviser.')->group(function () {
-            Route::view('/dashboard', 'dashboard', [
-                'eyebrow' => 'Adviser workspace',
-                'title' => 'Adviser Dashboard',
-                'description' => 'Track your advisory workload and use adviser-only screens for section-facing responsibilities.',
-                'links' => [
-                    [
-                        'label' => 'Advisory Sections',
-                        'route' => 'adviser.sections.index',
-                        'description' => 'Open the protected route for adviser-owned sections and consolidations.',
-                    ],
-                ],
-            ])->middleware('can:viewAdviserDashboard,'.User::class)->name('dashboard');
+            Route::get('/dashboard', AdviserDashboardController::class)
+                ->middleware('can:viewAdviserDashboard,'.User::class)
+                ->name('dashboard');
 
-            Route::view('/sections', 'protected-page', [
-                'eyebrow' => 'Adviser tools',
-                'title' => 'Advisory Sections',
-                'description' => 'This protected area is limited to advisers who work with their own advisory sections.',
-            ])->middleware('can:viewAdvisorySections,'.User::class)->name('sections.index');
+            require __DIR__.'/adviser-review.php';
         });
 
         Route::prefix('registrar')->name('registrar.')->group(function () {
-            Route::view('/dashboard', 'dashboard', [
-                'eyebrow' => 'Registrar workspace',
-                'title' => 'Registrar Dashboard',
-                'description' => 'View registrar-only read access to official records without exposing teacher or adviser routes.',
-                'links' => [
-                    [
-                        'label' => 'Student Records',
-                        'route' => 'registrar.records.index',
-                        'description' => 'Open the protected registrar route for official read-only records access.',
-                    ],
-                ],
-            ])->middleware('can:viewRegistrarDashboard,'.User::class)->name('dashboard');
+            Route::get('/dashboard', RegistrarDashboardController::class)
+                ->middleware('can:viewRegistrarDashboard,'.User::class)
+                ->name('dashboard');
 
-            Route::view('/records', 'protected-page', [
-                'eyebrow' => 'Registrar tools',
-                'title' => 'Student Records',
-                'description' => 'This protected area is limited to registrars and acts as the read-only records foundation for the MVP.',
-            ])->middleware('can:viewRegistrarRecords,'.User::class)->name('records.index');
+            require __DIR__.'/registrar-records.php';
         });
     });
 

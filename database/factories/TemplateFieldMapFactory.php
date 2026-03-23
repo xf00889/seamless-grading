@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\TemplateMappingKind;
 use App\Models\Template;
 use App\Models\TemplateFieldMap;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -19,7 +20,10 @@ class TemplateFieldMapFactory extends Factory
         return [
             'template_id' => Template::factory(),
             'field_key' => $fieldKey,
-            'source_column' => Str::snake(fake()->words(2, true)),
+            'mapping_kind' => TemplateMappingKind::FixedCell,
+            'target_cell' => fake()->randomElement(['A1', 'B4', 'C12', 'DATA_START']),
+            'sheet_name' => null,
+            'mapping_config' => null,
             'default_value' => null,
             'is_required' => true,
         ];

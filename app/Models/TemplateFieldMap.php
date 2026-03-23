@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TemplateMappingKind;
 use Database\Factories\TemplateFieldMapFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,8 @@ class TemplateFieldMap extends Model
     {
         return [
             'is_required' => 'boolean',
+            'mapping_kind' => TemplateMappingKind::class,
+            'mapping_config' => 'array',
         ];
     }
 

@@ -1,75 +1,98 @@
-<aside class="w-full border-b border-slate-200 bg-white lg:flex lg:min-h-screen lg:w-80 lg:flex-col lg:border-b-0 lg:border-r">
-    <div class="border-b border-slate-200 px-6 py-6">
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-            <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900 text-sm font-semibold uppercase tracking-[0.2em] text-white">
-                SG
-            </div>
-            <div>
-                <p class="text-sm font-semibold text-slate-900">School Grading Workflow</p>
+<aside class="app-sidebar" aria-label="Application navigation">
+    <div class="app-sidebar__panel">
+        <div class="app-sidebar__brand">
+            <a href="{{ route('dashboard') }}" class="app-brand">
+                <div class="app-brand__mark">SG</div>
+                <div>
+                    <p class="app-brand__title">School Grading Workflow</p>
+                    <p class="app-brand__subtitle">Role-aware workspace</p>
+                </div>
+            </a>
+
+            <button type="button" class="app-shell__close lg:hidden" data-sidebar-close aria-label="Close navigation">
+                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="m5 5 10 10M15 5 5 15" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="app-sidebar__user">
+            <div class="app-user-card">
+                <div class="app-user-card__identity">
+                    <div class="app-user-card__avatar" aria-hidden="true">
+                        {{ $userInitials }}
+                    </div>
+                    <div>
+                        <p class="app-user-card__name">{{ Auth::user()->name }}</p>
+                        <p class="app-user-card__email">{{ Auth::user()->email }}</p>
+                    </div>
+                </div>
                 @if ($currentUserRole)
-                    <p class="mt-1 text-xs font-medium uppercase tracking-[0.18em] text-slate-500">
-                        {{ $currentUserRole }}
-                    </p>
+                    <div class="app-user-card__meta">
+                        <span class="status-chip status-chip--sky">
+                            <span class="status-chip__dot" aria-hidden="true"></span>
+                            <span>{{ $currentUserRole }}</span>
+                        </span>
+                    </div>
                 @endif
             </div>
-        </a>
-    </div>
-
-    <div class="px-4 py-6">
-        <div class="rounded-2xl bg-slate-50 px-4 py-4">
-            <p class="text-sm font-semibold text-slate-900">{{ Auth::user()->name }}</p>
-            <p class="mt-1 text-sm text-slate-500">{{ Auth::user()->email }}</p>
         </div>
-    </div>
 
-    <nav class="flex-1 px-4 pb-6" aria-label="Primary">
-        <ul class="space-y-2">
-            @foreach ($sidebarItems as $item)
-                <li>
-                    <a
-                        href="{{ route($item['route']) }}"
-                        @class([
-                            'sidebar-link',
-                            'sidebar-link-active' => $item['active'],
-                            'sidebar-link-inactive' => ! $item['active'],
-                        ])
-                    >
-                        <div>
-                            <p class="text-sm font-semibold">{{ $item['label'] }}</p>
-                            <p @class([
-                                'mt-1 text-xs leading-5',
-                                'text-slate-300' => $item['active'],
-                                'text-slate-500' => ! $item['active'],
-                            ])>
-                                {{ $item['description'] }}
-                            </p>
-                        </div>
-                    </a>
-                </li>
+        <nav class="app-sidebar__nav" aria-label="Primary">
+            @foreach ($sidebarGroups as $group)
+                <section class="app-nav-group" aria-label="{{ $group['label'] }}">
+                    <p class="app-nav-group__label">{{ $group['label'] }}</p>
+                    <ul class="app-nav-group__list">
+                        @foreach ($group['items'] as $item)
+                            <li>
+                                <a
+                                    href="{{ route($item['route']) }}"
+                                    @class([
+                                        'sidebar-link',
+                                        'sidebar-link-active' => $item['active'],
+                                        'sidebar-link-inactive' => ! $item['active'],
+                                    ])
+                                >
+                                    <div class="sidebar-link__icon" aria-hidden="true">
+                                        <x-icon :name="$item['icon']" class="h-5 w-5" />
+                                    </div>
+
+                                    <div class="sidebar-link__body">
+                                        <p class="sidebar-link__label">{{ $item['label'] }}</p>
+                                        <p class="sidebar-link__description">{{ $item['description'] }}</p>
+                                    </div>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </section>
             @endforeach
-        </ul>
-    </nav>
+        </nav>
 
-    <div class="border-t border-slate-200 px-4 py-6">
-        <a
-            href="{{ route('profile.edit') }}"
-            class="sidebar-link sidebar-link-inactive"
-        >
-            <div>
-                <p class="text-sm font-semibold">Profile</p>
-                <p class="mt-1 text-xs text-slate-500">Manage your account details</p>
-            </div>
-        </a>
+        <div class="app-sidebar__footer">
+            <a href="{{ route('profile.edit') }}" class="sidebar-link sidebar-link-inactive">
+                <div class="sidebar-link__icon" aria-hidden="true">
+                    <x-icon name="users" class="h-5 w-5" />
+                </div>
+                <div class="sidebar-link__body">
+                    <p class="sidebar-link__label">Profile</p>
+                    <p class="sidebar-link__description">Manage your account details</p>
+                </div>
+            </a>
 
-        <form method="POST" action="{{ route('logout') }}" class="mt-2">
-            @csrf
+            <form method="POST" action="{{ route('logout') }}" class="mt-2">
+                @csrf
 
-            <button
-                type="submit"
-                class="sidebar-link sidebar-link-inactive w-full text-left"
-            >
-                <span class="text-sm font-semibold">Log out</span>
-            </button>
-        </form>
+                <button type="submit" class="sidebar-link sidebar-link-inactive w-full text-left">
+                    <span class="sidebar-link__icon" aria-hidden="true">
+                        <x-icon name="undo" class="h-5 w-5" />
+                    </span>
+                    <div class="sidebar-link__body">
+                        <p class="sidebar-link__label">Log out</p>
+                        <p class="sidebar-link__description">Sign out of this workspace</p>
+                    </div>
+                </button>
+            </form>
+        </div>
     </div>
 </aside>

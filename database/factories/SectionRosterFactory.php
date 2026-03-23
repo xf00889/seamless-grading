@@ -28,6 +28,13 @@ class SectionRosterFactory extends Factory
             'enrollment_status' => EnrollmentStatus::Active,
             'enrolled_on' => fake()->dateTimeBetween('-6 months', 'now'),
             'withdrawn_on' => null,
+            'movement_reason' => null,
+            'movement_recorded_at' => null,
+            'movement_recorded_by' => null,
+            'year_end_status' => null,
+            'year_end_status_reason' => null,
+            'year_end_status_set_at' => null,
+            'year_end_status_set_by' => null,
             'is_official' => true,
         ];
     }

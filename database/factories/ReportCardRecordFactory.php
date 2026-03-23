@@ -20,16 +20,35 @@ class ReportCardRecordFactory extends Factory
     {
         return [
             'section_roster_id' => SectionRoster::factory(),
+            'section_id' => fn (array $attributes): int => SectionRoster::query()
+                ->findOrFail($attributes['section_roster_id'])
+                ->section_id,
+            'school_year_id' => fn (array $attributes): int => SectionRoster::query()
+                ->findOrFail($attributes['section_roster_id'])
+                ->school_year_id,
+            'learner_id' => fn (array $attributes): int => SectionRoster::query()
+                ->findOrFail($attributes['section_roster_id'])
+                ->learner_id,
             'grading_period_id' => fn (array $attributes): int => $this->gradingPeriodIdForRoster(
                 $attributes['section_roster_id'],
             ),
             'template_id' => Template::factory()->state([
                 'document_type' => TemplateDocumentType::Sf9,
             ]),
+            'document_type' => fn (array $attributes): TemplateDocumentType => Template::query()
+                ->findOrFail($attributes['template_id'])
+                ->document_type,
             'generated_by' => User::factory(),
             'record_version' => 1,
             'template_version' => 1,
+            'file_name' => fn (array $attributes): string => $this->documentTypeValue($attributes).'-'.fake()->uuid().'.xlsx',
+            'file_disk' => 'local',
+            'file_path' => fn (array $attributes): string => 'exports/'.$this->documentTypeValue($attributes).'/'.fake()->uuid().'.xlsx',
+            'is_finalized' => false,
+            'finalized_at' => null,
+            'finalized_by' => null,
             'payload' => [
+                'source_hash' => fake()->sha256(),
                 'general_average' => fake()->randomFloat(2, 75, 98),
                 'remarks' => fake()->randomElement(['Passed', 'Promoted']),
             ],
@@ -52,5 +71,14 @@ class ReportCardRecordFactory extends Factory
                 'is_open' => false,
             ],
         )->id;
+    }
+
+    private function documentTypeValue(array $attributes): string
+    {
+        $documentType = $attributes['document_type'] ?? TemplateDocumentType::Sf9;
+
+        return $documentType instanceof TemplateDocumentType
+            ? $documentType->value
+            : (string) $documentType;
     }
 }

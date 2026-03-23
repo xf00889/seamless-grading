@@ -147,6 +147,7 @@ class RoleDashboardAccessTest extends TestCase
             ['admin.academic-setup'],
             ['teacher.dashboard'],
             ['teacher.loads.index'],
+            ['teacher.returned-submissions.index'],
             ['adviser.dashboard'],
             ['adviser.sections.index'],
             ['registrar.dashboard'],

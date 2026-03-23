@@ -18,4 +18,9 @@ class GradeLevel extends Model
     {
         return $this->hasMany(Section::class);
     }
+
+    public function templates(): HasMany
+    {
+        return $this->hasMany(Template::class);
+    }
 }

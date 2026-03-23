@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\EnrollmentStatus;
+use App\Enums\LearnerYearEndStatus;
 use Database\Factories\SectionRosterFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,9 @@ class SectionRoster extends Model
             'enrollment_status' => EnrollmentStatus::class,
             'enrolled_on' => 'date',
             'withdrawn_on' => 'date',
+            'movement_recorded_at' => 'datetime',
+            'year_end_status' => LearnerYearEndStatus::class,
+            'year_end_status_set_at' => 'datetime',
             'is_official' => 'boolean',
         ];
     }
@@ -41,6 +45,16 @@ class SectionRoster extends Model
         return $this->belongsTo(Learner::class);
     }
 
+    public function yearEndStatusSetBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'year_end_status_set_by');
+    }
+
+    public function movementRecordedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'movement_recorded_by');
+    }
+
     public function importBatch(): BelongsTo
     {
         return $this->belongsTo(ImportBatch::class);
@@ -54,5 +68,10 @@ class SectionRoster extends Model
     public function reportCardRecords(): HasMany
     {
         return $this->hasMany(ReportCardRecord::class);
+    }
+
+    public function learnerStatusAuditLogs(): HasMany
+    {
+        return $this->hasMany(LearnerStatusAuditLog::class);
     }
 }

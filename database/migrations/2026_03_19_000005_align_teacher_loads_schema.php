@@ -20,15 +20,17 @@ return new class extends Migration
         ]);
 
         Schema::table('teacher_loads', function (Blueprint $table): void {
+            $table->dropForeign(['section_id']);
+            $table->dropForeign(['teacher_id']);
             $table->dropUnique(['section_id', 'subject_id']);
             $table->dropIndex(['teacher_id', 'is_active']);
-            $table->dropForeign(['section_id']);
             $table->unsignedBigInteger('school_year_id')->nullable(false)->change();
         });
 
         Schema::table('teacher_loads', function (Blueprint $table): void {
             $table->foreign('school_year_id')->references('id')->on('school_years')->restrictOnDelete();
             $table->foreign('section_id')->references('id')->on('sections')->restrictOnDelete();
+            $table->foreign('teacher_id')->references('id')->on('users')->restrictOnDelete();
             $table->unique(
                 ['teacher_id', 'school_year_id', 'section_id', 'subject_id'],
                 'teacher_loads_teacher_school_year_section_subject_unique',
@@ -46,6 +48,7 @@ return new class extends Migration
 
         Schema::table('teacher_loads', function (Blueprint $table): void {
             $table->dropUnique('teacher_loads_teacher_school_year_section_subject_unique');
+            $table->dropForeign(['teacher_id']);
             $table->dropIndex(['teacher_id', 'school_year_id', 'is_active']);
             $table->dropIndex(['section_id', 'subject_id']);
             $table->dropForeign(['school_year_id']);
@@ -54,6 +57,7 @@ return new class extends Migration
 
         Schema::table('teacher_loads', function (Blueprint $table): void {
             $table->foreign('section_id')->references('id')->on('sections')->cascadeOnDelete();
+            $table->foreign('teacher_id')->references('id')->on('users')->restrictOnDelete();
             $table->unique(['section_id', 'subject_id']);
             $table->index(['teacher_id', 'is_active']);
             $table->dropColumn('school_year_id');

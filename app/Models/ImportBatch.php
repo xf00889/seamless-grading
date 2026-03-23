@@ -34,6 +34,11 @@ class ImportBatch extends Model
         return $this->belongsTo(User::class, 'imported_by');
     }
 
+    public function confirmedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'confirmed_by');
+    }
+
     public function rows(): HasMany
     {
         return $this->hasMany(ImportBatchRow::class);

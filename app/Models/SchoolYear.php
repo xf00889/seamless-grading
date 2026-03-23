@@ -42,4 +42,9 @@ class SchoolYear extends Model
     {
         return $this->hasMany(SectionRoster::class);
     }
+
+    public function reportCardRecords(): HasMany
+    {
+        return $this->hasMany(ReportCardRecord::class);
+    }
 }

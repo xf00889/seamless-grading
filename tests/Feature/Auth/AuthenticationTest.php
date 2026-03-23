@@ -73,6 +73,24 @@ class AuthenticationTest extends TestCase
             ]);
     }
 
+    public function test_inactive_users_can_not_authenticate_even_with_valid_credentials(): void
+    {
+        $user = User::factory()->inactive()->create();
+        $user->assignRole(RoleName::Teacher->value);
+
+        $response = $this->from('/login')->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $this->assertGuest();
+        $response
+            ->assertRedirect('/login')
+            ->assertSessionHasErrors([
+                'email' => 'Your account is inactive. Please contact an administrator.',
+            ]);
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();

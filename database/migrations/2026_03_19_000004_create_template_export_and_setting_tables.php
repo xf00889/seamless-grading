@@ -50,7 +50,10 @@ return new class extends Migration
             $table->timestamp('exported_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['teacher_load_id', 'grading_period_id', 'version']);
+            $table->unique(
+                ['teacher_load_id', 'grading_period_id', 'version'],
+                'grading_sheet_exports_load_period_version_unique',
+            );
             $table->index('exported_by');
         });
 
@@ -66,7 +69,10 @@ return new class extends Migration
             $table->timestamp('generated_at')->nullable();
             $table->timestamps();
 
-            $table->unique(['section_roster_id', 'grading_period_id', 'record_version']);
+            $table->unique(
+                ['section_roster_id', 'grading_period_id', 'record_version'],
+                'report_card_records_roster_period_version_unique',
+            );
             $table->index('generated_by');
         });
 

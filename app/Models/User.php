@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['name', 'email', 'password', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -22,6 +22,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'is_active' => 'boolean',
             'password' => 'hashed',
         ];
     }
@@ -41,6 +42,11 @@ class User extends Authenticatable
         return $this->hasMany(ImportBatch::class, 'imported_by');
     }
 
+    public function confirmedImportBatches(): HasMany
+    {
+        return $this->hasMany(ImportBatch::class, 'confirmed_by');
+    }
+
     public function submittedGradeSubmissions(): HasMany
     {
         return $this->hasMany(GradeSubmission::class, 'submitted_by');
@@ -56,9 +62,29 @@ class User extends Authenticatable
         return $this->hasMany(GradingSheetExport::class, 'exported_by');
     }
 
+    public function gradingSheetExportAuditLogs(): HasMany
+    {
+        return $this->hasMany(GradingSheetExportAuditLog::class, 'acted_by');
+    }
+
     public function reportCardRecords(): HasMany
     {
         return $this->hasMany(ReportCardRecord::class, 'generated_by');
+    }
+
+    public function finalizedReportCardRecords(): HasMany
+    {
+        return $this->hasMany(ReportCardRecord::class, 'finalized_by');
+    }
+
+    public function reportCardRecordAuditLogs(): HasMany
+    {
+        return $this->hasMany(ReportCardRecordAuditLog::class, 'acted_by');
+    }
+
+    public function learnerStatusAuditLogs(): HasMany
+    {
+        return $this->hasMany(LearnerStatusAuditLog::class, 'acted_by');
     }
 
     public function approvalLogs(): HasMany
